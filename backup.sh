@@ -28,17 +28,18 @@ dst_data_cripto="/media/truecrypt1/"
 ## multimedia folder
 src_music_folder=$src_data"Músicas/"
 src_movies_folder_watched=$src_data"Filmes/Vistos/"
-dst_movies_folder=$dst_data+"Filmes/"
+dst_movies_folder=$dst_data"Filmes/Vistos"
 
 ## log file
 log_file=$dst_data"log_backup.txt"
 
-#$(folderIsEmpty $src_movies_folder)
+$(folderIsEmpty $src_movies_folder_watched)
 
-#if [ $? -eq 1 ]; then
-#	echo "Movendo Filmes da pasta $src_movies_folder"
-#	mv -v "$src_movies_folder*" /home/marco/
-#fi
+if [ $? -eq 1 ]; then
+	echo "Movendo Filmes da pasta $src_movies_folder"
+	cd $src_movies_folder_watched
+	mv -v * $dst_movies_folder
+fi
 
 
 echo "Limpando arquivos da pasta musicas..."
@@ -48,7 +49,7 @@ find $src_music_folder -name "*.jpeg" -exec rm -rf {} \;
 find $src_music_folder -name "*.db" -exec rm -rf {} \;
 
 echo "Iniciando transferencias..."
-rsync -Crav --exclude "Firefox" --exclude "Downloads" --exclude "Jogos" --exclude "System Volume Information" --exclude "RECYCLE" --exclude ".Trash-1000" $src_data $dst_data
+rsync -Cravp --exclude "Firefox" --exclude "Jogos" --exclude "Filmes" --exclude "System Volume Information" --exclude "RECYCLE" --exclude ".Trash-1000" $src_data $dst_data
 
 echo  $src_data "->" $dst_data "sincronizado as" `date` >> $log_file
 
@@ -63,7 +64,7 @@ if [ "$1" == "s" ]; then
 
 	if [ $? -eq 1 ]; then
 		echo "Sincronizando $src_data_cripto"
-		rsync -Crav --exclude ".Trash-1000" $src_data_cripto $dst_data_cripto
+		rsync -Cravp --exclude ".Trash-1000" $src_data_cripto $dst_data_cripto
 	fi
 	
 
